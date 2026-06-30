@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JFM — Formation Marketing Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0D12;
+    --surface:#14171F;
+    --surface-2:#1B1F29;
+    --text:#F3F1EA;
+    --muted:#9298A3;
+    --accent:#FF5630;
+    --accent-soft:#3A1C14;
+    --accent-2:#2BD9A6;
+    --border:rgba(255,255,255,0.09);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--accent); color:#0B0D12;}
+
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(11,13,18,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .logo-mark{
+    width:34px; height:34px; border-radius:7px;
+    background:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px; color:#0B0D12;
+    letter-spacing:-0.5px;
+  }
+  .logo-text{font-weight:600; font-size:15px;}
+  .logo-text span{color:var(--muted); font-weight:500;}
+
+  .meter-wrap{display:flex; align-items:center; gap:12px;}
+  .meter-label{font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;}
+  .meter-track{
+    width:140px; height:6px; border-radius:4px; background:var(--surface-2);
+    overflow:hidden; border:1px solid var(--border);
+  }
+  .meter-fill{
+    height:100%; width:0%; border-radius:4px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition:width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .meter-pct{font-size:12px; color:var(--text); width:34px; text-align:right;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .hero{
+    padding:90px 6vw 70px;
+    max-width:1180px; margin:0 auto;
+    border-bottom:1px solid var(--border);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--accent-2); letter-spacing:0.08em; text-transform:uppercase;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--accent-2); display:inline-block;}
+  .hero h1{
+    font-size:clamp(38px, 6vw, 74px);
+    font-weight:700; line-height:1.04;
+    max-width:920px;
+  }
+  .hero h1 em{font-style:normal; color:var(--accent);}
+  .hero p.lede{
+    margin-top:26px; font-size:19px; color:var(--muted); max-width:600px;
+  }
+  .hero-cta{
+    margin-top:38px; display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+  }
+  .btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:15px;
+    padding:14px 26px; border-radius:8px; border:1px solid transparent;
+    cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--accent); color:#0B0D12;}
+  .btn-primary:hover{background:#ff6a47;}
+  .btn-ghost{background:transparent; border-color:var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent-2);}
+
+  .stat-row{
+    margin-top:60px; display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+  }
+  .stat{background:var(--surface); padding:22px 24px;}
+  .stat .num{font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; color:var(--accent-2);}
+  .stat .lbl{font-size:13px; color:var(--muted); margin-top:4px;}
+
+  .section{padding:64px 6vw; max-width:1180px; margin:0 auto;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:34px; flex-wrap:wrap; gap:14px;}
+  .section-head h2{font-size:28px;}
+  .section-head p{color:var(--muted); font-size:14px; max-width:420px;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:14px;}
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:24px; cursor:pointer; position:relative; overflow:hidden;
+    transition:border-color .2s ease, transform .2s ease, background .2s ease;
+  }
+  .card:hover{border-color:var(--accent); transform:translateY(-3px); background:var(--surface-2);}
+  .card .idx{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent-2);}
+  .card h3{font-size:18px; margin-top:14px; margin-bottom:8px; font-weight:600;}
+  .card p{font-size:13.5px; color:var(--muted);}
+  .card .arrow{
+    margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--text); display:flex; align-items:center; gap:6px;
+  }
+  .card .check{
+    position:absolute; top:18px; right:18px;
+    width:22px; height:22px; border-radius:50%;
+    background:var(--accent-2); color:#0B0D12;
+    display:none; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700;
+  }
+  .card.done .check{display:flex;}
+  .card.done{border-color:rgba(43,217,166,0.4);}
+
+  .closing{
+    margin:0 6vw 80px; max-width:1180px; margin-left:auto; margin-right:auto;
+    background:linear-gradient(135deg, var(--accent-soft), var(--surface));
+    border:1px solid var(--border); border-radius:16px;
+    padding:50px 6vw; text-align:center;
+  }
+  .closing h2{font-size:clamp(24px,3.4vw,36px); max-width:680px; margin:0 auto;}
+  .closing p{color:var(--muted); margin-top:14px; max-width:520px; margin-left:auto; margin-right:auto;}
+  .closing .btn{margin-top:26px;}
+
+  footer{padding:30px 6vw 50px; text-align:center; color:var(--muted); font-size:12.5px;}
+
+  .module-page{max-width:760px; margin:0 auto; padding:50px 6vw 100px;}
+  .back-btn{
+    display:inline-flex; align-items:center; gap:8px; color:var(--muted);
+    font-size:13px; cursor:pointer; margin-bottom:34px; font-family:'JetBrains Mono',monospace;
+  }
+  .back-btn:hover{color:var(--accent-2);}
+  .mod-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:14px;}
+  .module-page h1{font-size:clamp(28px,4vw,42px); margin-bottom:18px;}
+  .module-page .teaser{color:var(--muted); font-size:17px; margin-bottom:38px; max-width:600px;}
+  .module-page h3{font-size:15px; color:var(--accent-2); text-transform:uppercase; letter-spacing:0.05em; margin:34px 0 14px; font-family:'JetBrains Mono',monospace; font-weight:600;}
+  .module-page p{color:#D8D6CF; font-size:15.5px; margin-bottom:14px;}
+  .module-page ul{list-style:none; margin:0 0 10px;}
+  .module-page ul li{
+    position:relative; padding-left:24px; margin-bottom:11px; color:#D8D6CF; font-size:15px;
+  }
+  .module-page ul li::before{
+    content:''; position:absolute; left:0; top:8px; width:7px; height:7px; border-radius:2px;
+    background:var(--accent);
+  }
+  .callout{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent-2);
+    border-radius:8px; padding:20px 22px; margin:26px 0;
+  }
+  .callout .lbl{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;}
+  .callout p{margin:0; color:var(--text); font-size:14.5px;}
+
+  .example{
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:8px; padding:20px 22px; margin:26px 0;
+  }
+  .example .lbl{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;}
+  .example p{margin:0; color:#D8D6CF; font-size:14.5px; font-style:italic;}
+
+  .mod-nav{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:60px; padding-top:26px; border-top:1px solid var(--border); gap:14px; flex-wrap:wrap;
+  }
+  .mod-nav .navlink{font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:4px; cursor:pointer;}
+  .mod-nav .navlink:hover{color:var(--accent-2);}
+  .mod-nav .navlink .dir{font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .mod-nav .navlink .title{color:var(--text); font-weight:600; font-size:14.5px;}
+  .mod-nav .navlink.next{text-align:right; align-items:flex-end;}
+
+  @media(max-width:680px){
+    .stat-row{grid-template-columns:1fr;}
+    .meter-wrap{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo" onclick="goHome()">
+    <div class="logo-mark">JFM</div>
+    <div class="logo-text">JFM <span>— Formation Marketing Digital</span></div>
+  </div>
+  <div class="meter-wrap">
+    <span class="meter-label">Score de vente</span>
+    <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+    <span class="meter-pct" id="meterPct">0%</span>
+  </div>
+</div>
+
+<div class="view active" id="view-home">
+
+  <div class="hero">
+    <div class="eyebrow">10 modules · 100% pratique</div>
+    <h1>Apprenez à vendre.<br>Pas seulement à communiquer<em>.</em></h1>
+    <p class="lede">JFM est une formation complète en marketing digital : stratégie, contenu, publicité, données, branding et vente. Choisissez un module, avancez à votre rythme, et terminez avec un plan d'action concret.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openModule(0)">Commencer la formation →</button>
+      <button class="btn btn-ghost" onclick="scrollToGrid()">Voir tous les modules</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">10</div><div class="lbl">modules indépendants</div></div>
+      <div class="stat"><div class="num">~5h</div><div class="lbl">de contenu actionnable</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">objectif : vendre mieux</div></div>
+    </div>
+  </div>
+
+  <div class="section" id="grid-section">
+    <div class="section-head">
+      <div>
+        <h2>Choisissez votre module</h2>
+        <p>Chaque module traite un sujet différent du marketing digital. Pas d'ordre imposé — cliquez sur celui dont vous avez besoin maintenant.</p>
+      </div>
+    </div>
+    <div class="grid" id="moduleGrid"></div>
+  </div>
+
+  <div class="closing">
+    <h2>À la fin de JFM, vous ne ferez plus seulement du marketing. Vous saurez vendre.</h2>
+    <p>Chaque module se termine par une technique applicable dès aujourd'hui. Lisez-les tous, et vous aurez une méthode complète — de l'attention du client jusqu'à la fidélisation.</p>
+    <button class="btn btn-primary" onclick="openModule(0)">Lancer le module 1 →</button>
+  </div>
+
+  <footer>JFM — Formation Marketing Digital, conçue pour être lue dans l'ordre que vous voulez.</footer>
+</div>
+
+<div class="view" id="view-module">
+  <div class="module-page" id="moduleContent"></div>
+</div>
+
+<script>
+const modules = [
+  {
+    title: "Stratégie & positionnement de marque",
+    teaser: "Avant de publier quoi que ce soit, savoir exactement qui vous êtes et pour qui vous parlez.",
+    body: `
+      <p>Le marketing digital qui ne convertit pas commence presque toujours par la même erreur : parler à tout le monde. Avant de penser au moindre canal, à la moindre publicité ou au moindre post, il faut répondre à une question simple mais souvent négligée : pour qui existe réellement votre marque ?</p>
+      <p>Un positionnement clair répond à trois questions avant toute action : à qui je m'adresse, quel problème je résous mieux que les autres, et pourquoi me choisir maintenant plutôt qu'un concurrent ou que l'inaction. Sans ces réponses, chaque action marketing devient un coup au hasard, difficile à mesurer et difficile à reproduire.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Une cible trop large produit un message faible. Plus l'audience est précise, plus le message est puissant et plus il résonne.</li>
+        <li>Le positionnement se résume en une phrase : « Pour [cible], [marque] est la solution qui [bénéfice unique]. »</li>
+        <li>La différenciation ne vient pas du produit seul, mais souvent de la promesse, du ton et de l'expérience client.</li>
+        <li>Un bon positionnement reste stable dans le temps, même si les campagnes et les formats changent autour de lui.</li>
+        <li>Le positionnement doit transparaître partout : site, réseaux sociaux, emails, jusqu'au service client.</li>
+        <li>Se positionner, c'est aussi accepter de ne pas plaire à tout le monde : c'est précisément ce qui rend le message mémorable.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Commencez par interroger vos meilleurs clients actuels : pourquoi vous ont-ils choisi, et pas un concurrent ? Leurs réponses contiennent souvent votre véritable positionnement, plus authentique que celui imaginé en interne. Confrontez ensuite ce positionnement à votre offre réelle : si un écart existe, c'est soit votre communication, soit votre produit qui doit évoluer.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une agence de comptabilité qui se positionne « pour freelances qui détestent la paperasse » attirera moins de monde qu'une agence généraliste, mais convertira beaucoup mieux ce public précis, car chaque mot de son site lui parle directement.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Écrivez votre phrase de positionnement en une seule ligne. Si elle pourrait s'appliquer à votre principal concurrent sans la modifier, elle n'est pas encore assez précise.</p>
+      </div>`
+  },
+  {
+    title: "Référencement naturel (SEO)",
+    teaser: "Être trouvé au bon moment, par les bonnes personnes, sans payer pour chaque clic.",
+    body: `
+      <p>Le SEO consiste à faire en sorte que votre site apparaisse naturellement dans les résultats de recherche, sans payer pour chaque visite. C'est un investissement lent au départ, mais qui continue de générer du trafic longtemps après la publication d'un contenu, contrairement à une publicité qui s'arrête dès que le budget s'épuise.</p>
+      <p>Beaucoup d'entreprises abandonnent le SEO trop tôt, en attendant des résultats en quelques semaines alors qu'il faut généralement plusieurs mois pour voir l'effet cumulatif d'un travail régulier. C'est précisément cette patience qui crée un avantage durable face à des concurrents qui misent uniquement sur la publicité.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Le SEO se joue à trois niveaux : technique (vitesse, structure du site, indexation), contenu (pertinence, profondeur, intention) et autorité (liens, réputation, mentions).</li>
+        <li>Cibler l'intention de recherche compte plus que le simple volume de mots-clés visés.</li>
+        <li>Un contenu qui répond complètement à une question génère plus de confiance qu'un contenu superficiel mais techniquement bien optimisé.</li>
+        <li>Les résultats SEO se mesurent sur plusieurs mois, pas plusieurs jours : la patience fait partie de la stratégie.</li>
+        <li>La structure d'un site (catégories, maillage interne) aide autant les moteurs de recherche que les visiteurs à s'orienter.</li>
+        <li>Mettre à jour régulièrement les anciens contenus performe souvent mieux que d'en publier sans cesse de nouveaux.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Avant de produire du contenu, tapez vos sujets potentiels dans un moteur de recherche et observez ce qui apparaît déjà : c'est un indicateur direct de ce que l'algorithme considère comme une réponse pertinente. Structurez ensuite votre contenu pour qu'il réponde plus complètement et plus clairement que ce qui existe déjà.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Un artisan plombier qui rédige un guide détaillé « comment éviter une fuite d'eau en hiver » capte des recherches locales précises, bien plus rentables qu'une simple page « plomberie » trop générique pour se positionner.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Listez les 5 questions que vos clients posent le plus souvent avant d'acheter. Ce sont vos 5 prochains contenus à écrire, dans l'ordre de leur priorité d'achat.</p>
+      </div>`
+  },
+  {
+    title: "Réseaux sociaux & social media",
+    teaser: "Construire une communauté qui s'engage, pas seulement une audience qui regarde.",
+    body: `
+      <p>Les réseaux sociaux ne servent pas à « être présent », mais à créer une relation de confiance avant la vente. Chaque plateforme a son propre langage, son propre rythme et ses propres codes : ce qui fonctionne sur LinkedIn ne fonctionne pas nécessairement sur Instagram ou TikTok, et inversement.</p>
+      <p>La plus grande erreur consiste à publier le même contenu partout, de la même manière. Une stratégie social media efficace adapte le format, le ton et même le message selon la plateforme, tout en gardant une identité de marque reconnaissable d'un canal à l'autre.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>La régularité compte plus que le volume : mieux vaut 3 publications par semaine tenues dans la durée que 10 publications puis le silence.</li>
+        <li>Le contenu qui éduque, divertit ou inspire performe généralement mieux que le contenu purement promotionnel.</li>
+        <li>L'engagement (commentaires, partages, sauvegardes) pèse souvent plus que les simples vues dans la portée organique.</li>
+        <li>Répondre aux commentaires et messages fait partie intégrante du contenu, pas une tâche annexe à négliger.</li>
+        <li>Chaque plateforme récompense un format différent : la vidéo courte sur certaines, le texte long sur d'autres.</li>
+        <li>Une communauté engagée vaut plus, sur le long terme, qu'une large audience passive qui ne réagit jamais.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Plutôt que de viser la viralité, concentrez-vous sur la conversation : posez des questions, répondez sincèrement, et traitez vos abonnés comme une communauté plutôt que comme un public. C'est cette proximité, plus que la fréquence de publication seule, qui transforme des abonnés en clients.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une marque de cosmétiques qui répond personnellement à chaque commentaire sur ses posts crée plus de confiance, et donc plus de ventes, qu'une marque qui publie davantage mais ignore sa communauté.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Choisissez une seule plateforme prioritaire pour les 30 prochains jours, et publiez-y trois fois par semaine sans exception, en répondant à chaque commentaire reçu.</p>
+      </div>`
+  },
+  {
+    title: "Email marketing & automation",
+    teaser: "Le canal le plus rentable du marketing digital, encore trop souvent négligé.",
+    body: `
+      <p>Contrairement aux réseaux sociaux, votre liste email vous appartient entièrement. C'est l'un des rares canaux où vous touchez directement votre audience, sans dépendre d'un algorithme qui peut changer du jour au lendemain et réduire votre visibilité.</p>
+      <p>L'email marketing est souvent perçu comme un canal dépassé, alors qu'il reste l'un des plus rentables en marketing digital, à condition d'être utilisé avec méthode plutôt que comme un simple outil d'envoi massif et impersonnel.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Une séquence de bienvenue automatisée convertit généralement mieux qu'un envoi ponctuel, car elle arrive au moment d'intérêt maximal du contact.</li>
+        <li>L'objet de l'email détermine une grande partie du taux d'ouverture : il mérite autant de travail que le contenu lui-même.</li>
+        <li>La segmentation, par comportement ou par intérêt, augmente fortement les taux de conversion comparée à un envoi général identique pour tous.</li>
+        <li>Un email doit toujours avoir un seul objectif et un seul appel à l'action clair, jamais plusieurs messages mélangés.</li>
+        <li>Le nettoyage régulier de la liste (suppression des contacts inactifs) améliore la délivrabilité globale des campagnes.</li>
+        <li>L'automatisation permet de personnaliser à grande échelle sans multiplier le travail manuel à chaque envoi.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Cartographiez le parcours d'un nouvel inscrit : que doit-il comprendre en premier, quelle objection doit être levée, et à quel moment l'offre doit-elle apparaître naturellement. Une séquence automatisée bien pensée reproduit ce parcours pour chaque nouveau contact, sans intervention manuelle.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une boutique en ligne qui envoie un email de rappel automatique pour les paniers abandonnés récupère souvent une part significative de ventes qui auraient autrement été perdues définitivement.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Rédigez une séquence de 3 emails de bienvenue pour tout nouvel inscrit : un email de présentation, un email de valeur, un email avec une offre claire.</p>
+      </div>`
+  },
+  {
+    title: "Publicité payante (SEA & Social Ads)",
+    teaser: "Acheter de la visibilité intelligemment, en pilotant chaque euro dépensé.",
+    body: `
+      <p>La publicité payante permet d'obtenir des résultats rapides, contrairement au SEO qui demande de la patience. Mais sans méthode claire, c'est aussi le moyen le plus rapide de perdre de l'argent, en dispersant le budget sur des audiences ou des messages qui ne convertissent pas.</p>
+      <p>La publicité digitale n'est pas un raccourci magique : c'est un amplificateur. Elle amplifie ce qui fonctionne déjà (une offre claire, une page de vente convaincante) tout autant qu'elle amplifie les faiblesses d'un tunnel de vente mal construit.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Toujours commencer petit, mesurer, puis augmenter le budget uniquement sur ce qui fonctionne réellement.</li>
+        <li>Le ciblage doit refléter votre positionnement : viser large pour « tester » dilue presque toujours les résultats obtenus.</li>
+        <li>Tester plusieurs versions d'une même annonce (visuel, accroche, appel à l'action) révèle souvent des écarts de performance considérables.</li>
+        <li>Une publicité qui amène sur une page non adaptée à l'offre gâche le budget, même si l'annonce elle-même est excellente.</li>
+        <li>Le retargeting (recibler ceux qui ont déjà visité votre site) coûte généralement moins cher et convertit mieux qu'une audience froide.</li>
+        <li>Surveiller le coût par résultat plus que le coût par clic donne une vision plus fidèle de la rentabilité réelle.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Avant de lancer une campagne, posez-vous une question simple : si cette publicité fonctionne parfaitement et amène du trafic, la page d'atterrissage est-elle prête à convertir ce trafic ? Si la réponse est non, corrigez d'abord la page avant de dépenser le moindre euro en publicité.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une marque qui recible par publicité les visiteurs ayant consulté une fiche produit sans acheter obtient souvent un coût d'acquisition bien plus bas qu'en ciblant uniquement une audience qui ne la connaît pas encore.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Définissez un budget test modéré, créez 2 variantes d'une même annonce, et laissez-les tourner suffisamment longtemps avant de tirer la moindre conclusion.</p>
+      </div>`
+  },
+  {
+    title: "Content marketing & storytelling",
+    teaser: "Le contenu qui retient l'attention est celui qui raconte quelque chose, pas celui qui vend.",
+    body: `
+      <p>Le contenu marketing efficace ne commence pas par le produit, mais par une histoire, une tension, ou une transformation à laquelle le lecteur peut s'identifier directement. Le produit n'arrive qu'à la fin, comme une solution logique à un problème déjà exposé.</p>
+      <p>Le storytelling fonctionne parce que le cerveau humain retient mieux une histoire qu'une liste d'arguments. Une marque qui raconte plutôt qu'elle n'argumente reste en mémoire bien plus longtemps, et inspire davantage confiance.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Une bonne histoire suit une structure simple : situation de départ, obstacle, transformation, résultat final.</li>
+        <li>Le contenu doit être utile ou émotionnel avant d'être commercial, sous peine de perdre l'attention du lecteur trop tôt.</li>
+        <li>Réutiliser un même contenu sous plusieurs formats (article, vidéo, post, newsletter) maximise son impact pour un seul effort de création initial.</li>
+        <li>La cohérence du ton dans le temps construit une identité de marque reconnaissable, même sans logo visible.</li>
+        <li>Le client doit être le héros de l'histoire, et la marque, son guide ou son outil, jamais l'inverse.</li>
+        <li>Un bon contenu répond à une vraie question avant de chercher à convaincre de quoi que ce soit.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Avant d'écrire un contenu, identifiez l'émotion que vous voulez susciter : rassurer, inspirer, surprendre, ou faire rire. Cette émotion doit guider le choix des mots autant que le sujet lui-même, car c'est elle qui rend le contenu mémorable.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une marque de matériel de randonnée qui raconte l'histoire d'un client ayant terminé un trek difficile grâce à son équipement convainc davantage qu'une simple liste de caractéristiques techniques du produit.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Racontez une histoire client réelle (un problème, une solution, un résultat) plutôt que de décrire votre produit directement dans votre prochaine publication.</p>
+      </div>`
+  },
+  {
+    title: "Copywriting & techniques de vente",
+    teaser: "Les mots qui font passer un lecteur de l'intérêt à la décision d'achat.",
+    body: `
+      <p>Le copywriting est la compétence qui relie tous les autres modules : un bon SEO amène du trafic, une bonne publicité amène des clics, mais c'est le texte de vente qui déclenche finalement la décision d'achat. Sans copywriting efficace, tout le reste du travail marketing perd une grande partie de son impact.</p>
+      <p>Écrire pour vendre n'est pas écrire pour être joli : c'est écrire pour être compris instantanément, et pour répondre, dans l'ordre, aux objections que se pose le lecteur avant de passer à l'action.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>On vend un bénéfice, pas une caractéristique : pas « 500 Go de stockage » mais « ne perdez plus jamais un fichier important ».</li>
+        <li>Lever les objections dans le texte avant qu'elles n'empêchent l'achat augmente fortement le taux de conversion final.</li>
+        <li>La preuve sociale (avis, chiffres, témoignages) rassure là où l'argumentation seule ne suffit généralement pas.</li>
+        <li>Un seul appel à l'action clair convertit mieux que plusieurs options qui dispersent l'attention du lecteur.</li>
+        <li>Les premières lignes d'un texte décident si le lecteur continue ou abandonne : elles méritent un soin particulier.</li>
+        <li>La simplicité du langage convertit presque toujours mieux qu'un vocabulaire complexe ou trop technique.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Listez toutes les objections qu'un client pourrait avoir avant d'acheter (prix, doute, manque de temps) et répondez à chacune directement dans votre texte de vente, dans l'ordre où elles surgissent naturellement dans l'esprit du lecteur.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une page de vente qui ajoute « satisfait ou remboursé sous 30 jours » juste avant le bouton d'achat lève une objection courante au moment précis où elle freinerait la décision.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Reprenez votre page de vente actuelle et transformez chaque caractéristique technique en bénéfice concret et compréhensible pour le client.</p>
+      </div>`
+  },
+  {
+    title: "Analyse de données & KPIs",
+    teaser: "Ce qui n'est pas mesuré ne peut pas être amélioré.",
+    body: `
+      <p>Le marketing digital donne accès à une quantité de données rare en marketing traditionnel. Encore faut-il savoir quels indicateurs suivre, et surtout lesquels ignorer pour ne pas se perdre dans des chiffres qui ne changent rien aux décisions prises.</p>
+      <p>Beaucoup d'équipes marketing suivent des dizaines d'indicateurs sans jamais agir dessus. La donnée n'a de valeur que si elle débouche sur une décision concrète : continuer, arrêter, ou ajuster une action.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Le taux de conversion compte plus que le volume de trafic : mieux vaut 100 visiteurs qualifiés que 10 000 visiteurs non intéressés.</li>
+        <li>Le coût d'acquisition client (CAC) doit toujours être comparé à la valeur vie client (LTV) pour juger de la rentabilité réelle.</li>
+        <li>Suivre trop d'indicateurs à la fois dilue l'attention : 3 à 5 KPIs prioritaires suffisent généralement à piloter une activité.</li>
+        <li>Une baisse de performance doit toujours être analysée étape par étape du tunnel, et non de façon globale et vague.</li>
+        <li>Comparer une période à une autre comparable (semaine à semaine, mois à mois) évite les conclusions hâtives liées à la saisonnalité.</li>
+        <li>Un tableau de bord utile tient sur un seul écran : s'il faut faire défiler longtemps, il est probablement trop chargé.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Avant d'ajouter un nouvel indicateur à votre suivi, posez-vous une question : quelle décision changerait si ce chiffre montait ou descendait ? Si aucune décision n'en découle, cet indicateur n'a probablement pas sa place dans votre tableau de bord principal.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une entreprise qui suit uniquement le nombre de visiteurs peut croire à un succès, alors que son taux de conversion réel s'effondre : seule l'analyse croisée des deux indicateurs révèle le vrai problème.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Choisissez vos 3 indicateurs prioritaires (par exemple trafic qualifié, taux de conversion, coût d'acquisition) et suivez-les chaque semaine, sans exception.</p>
+      </div>`
+  },
+  {
+    title: "Tunnel de conversion & growth marketing",
+    teaser: "Transformer un simple visiteur en client, puis un client en ambassadeur.",
+    body: `
+      <p>Le tunnel de conversion représente le chemin qu'emprunte un visiteur, de la découverte de votre marque jusqu'à l'achat, puis la fidélisation. Chaque étape doit être pensée pour réduire les frictions et accompagner naturellement la décision du visiteur.</p>
+      <p>Le growth marketing s'appuie sur ce tunnel pour identifier précisément où se situent les pertes les plus importantes, puis concentrer les efforts là où l'impact sera le plus fort, plutôt que de disperser les ressources sur l'ensemble du parcours en même temps.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>Le tunnel classique suit 4 étapes : attention, intérêt, décision, action — chacune nécessite un message et un format différents.</li>
+        <li>La majorité des pertes de conversion se produisent entre l'intérêt et la décision : c'est généralement là qu'il faut concentrer ses efforts en priorité.</li>
+        <li>Le growth marketing consiste à tester rapidement de petites optimisations (un titre, une couleur de bouton, un délai de relance) plutôt que de tout changer d'un coup.</li>
+        <li>Fidéliser un client coûte généralement bien moins cher que d'en acquérir un nouveau, ce qui justifie d'investir aussi après la première vente.</li>
+        <li>Chaque étape du tunnel mérite son propre indicateur de suivi, pour localiser précisément où une amélioration aurait le plus d'impact.</li>
+        <li>Un tunnel trop long ou trop complexe décourage souvent plus qu'il ne rassure : la simplicité reste un avantage de conversion.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Cartographiez votre tunnel actuel étape par étape, et notez le taux de passage d'une étape à l'autre. L'étape où ce taux chute le plus fortement est presque toujours la priorité numéro un à corriger avant toute autre optimisation.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Un site e-commerce qui perd la majorité de ses visiteurs au moment du paiement gagnera plus à simplifier ce formulaire qu'à investir davantage en publicité pour attirer de nouveaux visiteurs.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Identifiez l'étape de votre tunnel où vous perdez le plus de clients potentiels, et concentrez vos efforts uniquement sur celle-ci ce mois-ci.</p>
+      </div>`
+  },
+  {
+    title: "Branding & fidélisation client",
+    teaser: "Construire une marque qu'on reconnaît, qu'on recommande, et vers laquelle on revient.",
+    body: `
+      <p>Le branding ne se limite pas à un logo ou une palette de couleurs : c'est l'ensemble des impressions qu'une personne garde après chaque interaction avec votre marque. Une marque forte réduit le besoin d'argumenter, parce que la confiance est déjà installée avant même la prise de contact.</p>
+      <p>Beaucoup d'entreprises concentrent tous leurs efforts sur l'acquisition de nouveaux clients, en négligeant ceux qui ont déjà acheté. Pourtant, la fidélisation est souvent le levier de croissance le plus rentable, car convaincre un client existant coûte généralement bien moins cher que d'en convaincre un nouveau.</p>
+      <h3>Ce qu'il faut retenir</h3>
+      <ul>
+        <li>La cohérence visuelle et verbale d'une marque (couleurs, ton, vocabulaire) construit la reconnaissance avant même la lecture du message.</li>
+        <li>Une promesse de marque tenue de manière répétée crée davantage de confiance qu'une promesse exceptionnelle tenue une seule fois.</li>
+        <li>Le service après-vente fait partie intégrante du branding : une mauvaise expérience après l'achat efface souvent une bonne impression avant l'achat.</li>
+        <li>Un programme de fidélité simple encourage le réachat sans nécessiter un effort marketing supplémentaire à chaque fois.</li>
+        <li>Les clients fidèles deviennent souvent les meilleurs ambassadeurs, recommandant la marque sans qu'aucune publicité ne soit nécessaire.</li>
+        <li>Une marque reconnaissable réduit la sensibilité au prix : les clients fidèles comparent moins systématiquement avant d'acheter à nouveau.</li>
+      </ul>
+      <h3>Comment l'appliquer concrètement</h3>
+      <p>Cartographiez chaque point de contact qu'un client a avec votre marque après l'achat : confirmation de commande, livraison, premier usage, service client. Chacun de ces moments est une occasion de renforcer la confiance, ou au contraire de la fragiliser si l'expérience est négligée.</p>
+      <div class="example">
+        <div class="lbl">Exemple concret</div>
+        <p>Une marque qui envoie un message personnalisé de remerciement après chaque achat, accompagné d'un conseil d'utilisation utile, renforce la relation client bien plus efficacement qu'une simple facture envoyée sans suivi.</p>
+      </div>
+      <div class="callout">
+        <div class="lbl">À appliquer dès aujourd'hui</div>
+        <p>Listez les 3 moments les plus négligés de l'expérience post-achat dans votre activité, et améliorez-en un dès cette semaine pour renforcer la fidélité de vos clients.</p>
+      </div>`
+  }
+];
+
+let visited = new Set();
+const total = modules.length;
+
+function buildGrid(){
+  const grid = document.getElementById('moduleGrid');
+  grid.innerHTML = '';
+  modules.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (visited.has(i) ? ' done' : '');
+    card.onclick = () => openModule(i);
+    card.innerHTML = `
+      <div class="check">✓</div>
+      <div class="idx">MODULE ${String(i+1).padStart(2,'0')}</div>
+      <h3>${m.title}</h3>
+      <p>${m.teaser}</p>
+      <div class="arrow">Ouvrir →</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function updateMeter(){
+  const pct = Math.round((visited.size / total) * 100);
+  document.getElementById('meterFill').style.width = pct + '%';
+  document.getElementById('meterPct').textContent = pct + '%';
+}
+
+function openModule(i){
+  visited.add(i);
+  updateMeter();
+  buildGrid();
+  const m = modules[i];
+  const prev = i > 0 ? modules[i-1] : null;
+  const next = i < total - 1 ? modules[i+1] : null;
+
+  document.getElementById('moduleContent').innerHTML = `
+    <div class="back-btn" onclick="goHome()">← Retour à tous les modules</div>
+    <div class="mod-eyebrow">Module ${String(i+1).padStart(2,'0')} / ${total}</div>
+    <h1>${m.title}</h1>
+    <p class="teaser">${m.teaser}</p>
+    ${m.body}
+    <div class="mod-nav">
+      ${prev ? `<div class="navlink" onclick="openModule(${i-1})"><span class="dir">← PRÉCÉDENT</span><span class="title">${prev.title}</span></div>` : `<div></div>`}
+      ${next ? `<div class="navlink next" onclick="openModule(${i+1})"><span class="dir">SUIVANT →</span><span class="title">${next.title}</span></div>` : `<div class="navlink next" onclick="goHome()"><span class="dir">TERMINÉ →</span><span class="title">Retour à l'accueil</span></div>`}
+    </div>
+  `;
+  showView('module');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function goHome(){
+  buildGrid();
+  showView('home');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function showView(name){
+  document.getElementById('view-home').classList.toggle('active', name === 'home');
+  document.getElementById('view-module').classList.toggle('active', name === 'module');
+}
+
+function scrollToGrid(){
+  document.getElementById('grid-section').scrollIntoView({behavior:'smooth'});
+}
+
+buildGrid();
+updateMeter();
+</script>
+
+</body>
+</html>
